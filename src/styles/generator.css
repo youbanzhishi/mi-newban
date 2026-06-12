@@ -1,0 +1,57 @@
+/* Generator - Password Generator Styles */
+.password-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+}
+
+.option-item input {
+    margin-right: 8px;
+}
+
+.password-display {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+#generatedPassword {
+    flex: 1;
+    padding: 12px 15px;
+    background-color: var(--dark);
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: monospace;
+    font-size: 16px;
+}
+
+#copyGeneratedPassword {
+    width: auto;
+    padding: 12px 15px;
+    white-space: nowrap;
+}
+
+/* Preferences */
+.preference-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.preference-label {
+    font-size: 16px;
+}
+
+.preference-control {
+    display: flex;
+    align-items: center;
+}

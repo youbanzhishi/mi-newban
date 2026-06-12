@@ -1,0 +1,116 @@
+/* Responsive - Responsive Design Styles */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+        padding: 15px 10px;
+    }
+
+    .logo h1,
+    .nav-title,
+    .nav-item span,
+    .storage-config {
+        display: none;
+    }
+
+    .logo {
+        justify-content: center;
+        padding-bottom: 15px;
+    }
+
+    .logo i {
+        margin-right: 0;
+    }
+
+    .nav-item {
+        justify-content: center;
+        padding: 15px 0;
+    }
+
+    .nav-item i {
+        margin-right: 0;
+        font-size: 20px;
+    }
+
+    .password-list {
+        width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 10px;
+        border-right: none;
+        border-bottom: 1px solid var(--gray);
+    }
+
+    .logo {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+        margin-right: 15px;
+    }
+
+    .nav-section {
+        margin-bottom: 0;
+        display: flex;
+    }
+
+    .nav-item {
+        margin-bottom: 0;
+        margin-right: 5px;
+    }
+
+    .storage-config {
+        display: none;
+    }
+
+    .content-area {
+        flex-direction: column;
+    }
+
+    .password-list {
+        width: 100%;
+        height: 300px;
+        border-right: none;
+        border-bottom: 1px solid var(--gray);
+    }
+
+    /* Bookmarks Mobile */
+    .bookmarks-folders {
+        gap: 10px;
+    }
+
+    .folder-item {
+        width: 160px;
+        min-width: 140px;
+        padding: 12px;
+    }
+
+    .folder-info h3 {
+        font-size: 14px;
+    }
+
+    .folder-info p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .folder-item {
+        width: 140px;
+        min-width: 120px;
+    }
+
+    .folder-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+}
