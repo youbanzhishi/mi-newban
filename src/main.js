@@ -67,8 +67,7 @@ class PasswordManager {
         this.loadBookmarks();
         this.loadFolders();
         this.cleanupInvalidReferences();
-        this.setupEventListeners();
-        this.setupModalCloseHandlers();
+        // 注意：事件绑定在 DOMContentLoaded 中 initAllModules 之后调用
         applySidebarState();
     }
 
@@ -107,6 +106,7 @@ class PasswordManager {
             this.masterKey = deriveKey(masterPassword);
             setMasterKey(this.masterKey);
             this.passwords = [];
+            // 显示主界面
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('appContainer').style.display = 'flex';
             this.showNotification('成功', '保险库已创建，请添加密码', 'success');
@@ -119,15 +119,11 @@ class PasswordManager {
         try {
             this.masterKey = deriveKey(masterPassword);
             setMasterKey(this.masterKey);
-            try {
-                this.passwords = loadPasswords() || [];
-                this.favorites = loadFavorites();
-                this.recentPasswords = loadRecentPasswords();
-                renderPasswordList();
-            } catch (e) {
-                this.showNotification('提示', '请输入保险箱密码', 'info');
-                return;
-            }
+            this.passwords = loadPasswords() || [];
+            this.favorites = loadFavorites();
+            this.recentPasswords = loadRecentPasswords();
+            renderPasswordList();
+            // 显示主界面
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('appContainer').style.display = 'flex';
             if (this.preferences.autoSyncOnOpen) this.syncPasswords();
@@ -191,30 +187,48 @@ document.addEventListener('DOMContentLoaded', () => {
     // 创建应用状态对象，用于模块间共享
     const appState = createAppState(app);
     
-    // 初始化所有模块
+    // 先初始化模块（设置 state 引用），再绑定事件
     initAllModules(appState);
+    setupEventListeners();
+    setupModalCloseHandlers();
 
     window.passwordManager = app;
 });
 
 /**
  * 创建应用状态对象
+ * 关键：所有可变状态属性必须用 getter/setter 代理到 app 实例，
+ * 否则 app.xxx = newValue 后 state.xxx 仍是旧值
  */
 function createAppState(app) {
     return {
-        // 状态引用
-        passwords: app.passwords,
-        currentPasswordId: app.currentPasswordId,
-        masterKey: app.masterKey,
-        storageConfig: app.storageConfig,
-        favorites: app.favorites,
-        recentPasswords: app.recentPasswords,
-        preferences: app.preferences,
-        bookmarks: app.bookmarks,
-        folders: app.folders,
-        currentFolderId: app.currentFolderId,
-        currentBookmarkId: app.currentBookmarkId,
-        importData: app.importData,
+        // 状态引用 - 全部用 getter/setter 代理，确保与 app 实例同步
+        get passwords() { return app.passwords; },
+        set passwords(v) { app.passwords = v; },
+        get currentPasswordId() { return app.currentPasswordId; },
+        set currentPasswordId(v) { app.currentPasswordId = v; },
+        get masterKey() { return app.masterKey; },
+        set masterKey(v) { app.masterKey = v; },
+        get storageConfig() { return app.storageConfig; },
+        set storageConfig(v) { app.storageConfig = v; },
+        get favorites() { return app.favorites; },
+        set favorites(v) { app.favorites = v; },
+        get recentPasswords() { return app.recentPasswords; },
+        set recentPasswords(v) { app.recentPasswords = v; },
+        get preferences() { return app.preferences; },
+        set preferences(v) { app.preferences = v; },
+        get bookmarks() { return app.bookmarks; },
+        set bookmarks(v) { app.bookmarks = v; },
+        get folders() { return app.folders; },
+        set folders(v) { app.folders = v; },
+        get currentFolderId() { return app.currentFolderId; },
+        set currentFolderId(v) { app.currentFolderId = v; },
+        get currentBookmarkId() { return app.currentBookmarkId; },
+        set currentBookmarkId(v) { app.currentBookmarkId = v; },
+        get importData() { return app.importData; },
+        set importData(v) { app.importData = v; },
+        get commitMsg() { return app.commitMsg; },
+        set commitMsg(v) { app.commitMsg = v; },
         
         // 注入方法
         showNotification: (t, m, ty) => app.showNotification(t, m, ty),
@@ -254,16 +268,6 @@ function createAppState(app) {
         processImportData: (...args) => app.processImportData(...args),
         exportConfig: () => app.exportConfig(),
         importConfigFromFile: () => app.importConfigFromFile(),
-        
-        // 书签方法（从 bookmark-view 导出）
-        get bookmarks() { return app.bookmarks; },
-        set bookmarks(v) { app.bookmarks = v; },
-        get folders() { return app.folders; },
-        set folders(v) { app.folders = v; },
-        get currentFolderId() { return app.currentFolderId; },
-        set currentFolderId(v) { app.currentFolderId = v; },
-        get currentBookmarkId() { return app.currentBookmarkId; },
-        set currentBookmarkId(v) { app.currentBookmarkId = v; },
     };
 }
 

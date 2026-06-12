@@ -33,18 +33,28 @@ export function initEventsModule(appState) {
  * 设置所有事件监听器
  */
 export function setupEventListeners() {
-    setupLoginEvents();
-    setupNavigationEvents();
-    setupPasswordEvents();
-    setupSearchEvents();
-    setupSyncEvents();
-    setupImportExportEvents();
-    setupStorageEvents();
-    setupPreferencesEvents();
-    setupGeneratorEvents();
-    setupSecurityAuditEvents();
-    setupBookmarkEvents();
-    setupOtherEvents();
+    // 每个子setup函数独立try-catch，防止单个失败阻断其余
+    const setupFns = [
+        ['Login', setupLoginEvents],
+        ['Navigation', setupNavigationEvents],
+        ['Password', setupPasswordEvents],
+        ['Search', setupSearchEvents],
+        ['Sync', setupSyncEvents],
+        ['ImportExport', setupImportExportEvents],
+        ['Storage', setupStorageEvents],
+        ['Preferences', setupPreferencesEvents],
+        ['Generator', setupGeneratorEvents],
+        ['SecurityAudit', setupSecurityAuditEvents],
+        ['Bookmark', setupBookmarkEvents],
+        ['Other', setupOtherEvents],
+    ];
+    for (const [name, fn] of setupFns) {
+        try {
+            fn();
+        } catch (err) {
+            console.error(`[MI] setup${name}Events failed:`, err);
+        }
+    }
 }
 
 /**
@@ -62,9 +72,16 @@ export function setupModalCloseHandlers() {
 
 // ========== Login Events ==========
 function setupLoginEvents() {
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
+    const loginForm = document.getElementById('loginForm');
+    if (!loginForm) {
+        console.error('[MI] loginForm not found in DOM');
+        return;
+    }
+    loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        if (state.handleLogin) state.handleLogin();
+        if (state.handleLogin) {
+            state.handleLogin();
+        }
     });
 }
 
