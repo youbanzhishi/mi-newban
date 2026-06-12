@@ -1,0 +1,13 @@
+#!/bin/bash
+while read -r local_ref local_hash remote_ref remote_hash; do
+  if [ "$local_hash" = "0000000000000000000000000000000000000000" ]; then
+    echo "❌ 禁止删除远程分支：$remote_ref"
+    exit 1
+  fi
+  if [ "$remote_hash" != "0000000000000000000000000000000000000000" ]; then
+    if ! git merge-base --is-ancestor "$remote_hash" "$local_hash" 2>/dev/null; then
+      echo "❌ 检测到非快进推送（强推），已拦截"
+      exit 1
+    fi
+  fi
+done
